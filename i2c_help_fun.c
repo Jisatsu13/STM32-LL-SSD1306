@@ -1,39 +1,4 @@
-#include "i2c_help_fyn.h"
-
-
-
-/** Write 8-bit to device register.
- * @param I2Cx 	   Selected I2C
- * @param DevID 	 I2C slave device address
- * @param addr   	 In reg write data
- * @param buf 		 Data write into register
- * @param size 		 How many bytes will write
- */
-void I2C_WriteBytesToAddr (I2C_TypeDef *I2Cx, uint8_t DevID, uint8_t addr, uint8_t *buf, uint16_t size)
-{
-  uint16_t i;
-  
-  LL_I2C_AcknowledgeNextData(I2Cx, LL_I2C_ACK);
-  LL_I2C_GenerateStartCondition(I2Cx);
-  while(!LL_I2C_IsActiveFlag_SB(I2Cx));
-
-  LL_I2C_TransmitData8(I2Cx, (DevID ) | I2C_REQUEST_WRITE );
-  while(!LL_I2C_IsActiveFlag_ADDR(I2Cx));
-
-  LL_I2C_ClearFlag_ADDR(I2Cx);
-
-  LL_I2C_TransmitData8(I2Cx, addr);
-  while(!LL_I2C_IsActiveFlag_TXE(I2Cx));
-  for(i = 0;i < size; i++)
-  {
-    LL_I2C_TransmitData8(I2Cx, buf[i]);
-    while(!LL_I2C_IsActiveFlag_TXE(I2Cx)) ;
-  }
-  LL_I2C_GenerateStopCondition(I2Cx);
-	
-}
-
-
+#include "i2c_help_fun.h"
 
 /* Start I2C function.
  * @param I2Cx 	   Selected I2C
