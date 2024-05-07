@@ -1,7 +1,7 @@
 #ifndef ssd1306
 #define ssd1306
 
-#include "i2c_help_fyn.h"
+#include "i2c_help_fun.h"
 #include "stm32f1xx_ll_utils.h"
 
 // I2c address
