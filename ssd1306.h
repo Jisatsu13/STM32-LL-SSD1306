@@ -11,10 +11,6 @@
 // SSD1306 LCD height in pixels
 #define SSD1306_HEIGHT          32 //or 64
 
-#define I2C_REQUEST_WRITE                       0x00
-#define I2C_REQUEST_READ                        0x01
-
-
 //
 //  Enumeration for screen colors
 //
