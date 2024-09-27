@@ -1,4 +1,5 @@
-#include "i2c_help_fun.h"
+#include "i2c_help_fyn.h"
+
 
 /* Start I2C function.
  * @param I2Cx 	   Selected I2C
@@ -28,6 +29,22 @@ void I2C_Write (I2C_TypeDef *I2Cx, uint8_t data)
 	while (!LL_I2C_IsActiveFlag_BTF(I2Cx)) {};  // wait for BTF bit to set
 }
 
+/* Multy write byte I2C function.
+ * @param I2Cx 	   Selected I2C
+ * @param data 	   pointer to data
+ * @param size 	   size of data
+ */
+void I2C_MultyWrite (I2C_TypeDef *I2Cx, uint8_t *data, uint16_t size)
+{
+	uint16_t i;
+  while(!LL_I2C_IsActiveFlag_TXE(I2Cx)){};     //wait for TXE bit to set
+  for(i = 0;i < size; i++)
+  {
+    LL_I2C_TransmitData8(I2Cx, data[i]);       //send data
+    while(!LL_I2C_IsActiveFlag_TXE(I2Cx)){};   //wait for TXE bit to set
+  }
+}
+
 /* Choise Slave Adress I2C function.
  * @param I2Cx 	   Selected I2C
  */
@@ -42,7 +59,7 @@ void I2C_Address (I2C_TypeDef *I2Cx,uint8_t Address)
  * @param I2Cx 	   Selected I2C
  * @param Address  I2C slave device address
  * @param buffer 	 Data from register
- * @param size 		 How many bytes will write
+ * @param size 		 How many bytes will read
  */
 void I2C_Read (I2C_TypeDef *I2Cx, uint8_t Address, uint8_t *buffer, uint8_t size)
 {	
@@ -59,12 +76,11 @@ void I2C_Read (I2C_TypeDef *I2Cx, uint8_t Address, uint8_t *buffer, uint8_t size
 	}	
 	else 
 	{
-		while (remaining>2)
+		while (remaining > 2)
 		{
-			
 			while(!LL_I2C_IsActiveFlag_RXNE(I2Cx)){};          // wait for RxNE to set
 			buffer[size-remaining] = LL_I2C_ReceiveData8(I2Cx);// copy the data into the buffer			
-			LL_I2C_AcknowledgeNextData(I2Cx, LL_I2C_ACK);     // Set the ACK bit to Acknowledge the data received
+			LL_I2C_AcknowledgeNextData(I2Cx, LL_I2C_ACK);      // Set the ACK bit to Acknowledge the data received
 		
 			remaining--;
 		}
@@ -94,6 +110,22 @@ void I2C_WriteData(I2C_TypeDef *I2Cx, uint8_t Address, uint8_t Reg, uint8_t Data
 	I2C_Write (I2Cx, Data);
 	I2C_Stop (I2Cx);
 }
+
+/** Multy Write 8-bit to device register.
+ * @param I2Cx 	   Selected I2C
+ * @param Address  I2C slave device address
+ * @param Reg   	 In reg write data
+ * @param Data 		 Data write into register
+ */
+void I2C_MultyWriteData(I2C_TypeDef *I2Cx, uint8_t Address, uint8_t Reg, uint8_t *Data, uint16_t size)
+{
+	I2C_Start (I2Cx);
+	I2C_Address (I2Cx, Address);
+	I2C_Write (I2Cx, Reg);
+	I2C_MultyWrite(I2Cx, Data, size);
+	I2C_Stop(I2Cx);
+}
+
 /** Read from device register.
  * @param I2Cx 	   Selected I2C
  * @param Address  I2C slave device address
