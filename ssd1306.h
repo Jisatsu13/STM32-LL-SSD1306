@@ -1,7 +1,7 @@
 #ifndef ssd1306
 #define ssd1306
 
-#include "i2c_help_fun.h"
+#include "i2c_help_fyn.h"
 #include "stm32f1xx_ll_utils.h"
 
 // I2c address
@@ -9,7 +9,7 @@
 // SSD1306 width in pixels
 #define SSD1306_WIDTH           128
 // SSD1306 LCD height in pixels
-#define SSD1306_HEIGHT          32 //or 64
+#define SSD1306_HEIGHT          64
 
 //
 //  Enumeration for screen colors
